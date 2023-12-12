@@ -25,5 +25,7 @@ public class Application {
         Event partita = dao.getById(4);
         logger.info("L'evento "+partita.getTitle()+" si terrà il "+partita.getEventDate());*/
         dao.save(evento1);
+        emf.close();
+        em.close();
     }
 }
