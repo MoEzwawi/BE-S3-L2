@@ -2,17 +2,21 @@ package MoEzwawi.entities;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 @Entity
 @Table(name = "Event")
 public class Event {
     @Id
     @Column(name = "event_code")
+    @GeneratedValue
     private long id;
     @Column(name = "event_title")
     private String title;
     @Column(name = "event_date")
-    private String eventDate;
+    private LocalDate eventDate;
     @Column(name = "event_description")
     private String description;
     @Enumerated(EnumType.STRING)
@@ -23,7 +27,7 @@ public class Event {
     public Event(){
 
     }
-    public Event(String title, String eventDate, EventType eventType) {
+    public Event(String title, LocalDate eventDate, EventType eventType) {
         this.title = title;
         this.eventDate = eventDate;
         this.eventType = eventType;
@@ -41,11 +45,11 @@ public class Event {
         this.title = title;
     }
 
-    public String getEventDate() {
+    public LocalDate getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(String eventDate) {
+    public void setEventDate(LocalDate eventDate) {
         this.eventDate = eventDate;
     }
 
@@ -72,7 +76,26 @@ public class Event {
     public void setMaximumCapacity(int maximumCapacity) {
         this.maximumCapacity = maximumCapacity;
     }
-
+    public static LocalDate parseDateForItaly (String date){
+        LocalDate parsedDate = null;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ITALY);
+            parsedDate = LocalDate.parse(date, formatter);
+        } catch(DateTimeParseException e){
+            System.err.println("Il formato data inserito non è valido!");
+        }
+        return parsedDate;
+    }
+    public static LocalDate parseDateForUSA (String date){
+        LocalDate parsedDate = null;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ITALY);
+            parsedDate = LocalDate.parse(date, formatter);
+        } catch(DateTimeParseException e){
+            System.err.println("Il formato data inserito non è valido!");
+        }
+        return parsedDate;
+    }
     @Override
     public String toString() {
         return "Event{" +

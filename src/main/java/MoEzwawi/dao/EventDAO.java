@@ -13,20 +13,38 @@ public class EventDAO {
     }
 
     public void save(Event event){
-        EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
-        em.persist(event);
-        transaction.commit();
-        System.out.println("L'evento " + event.getTitle() + " è stato aggiunto correttamente!");
+        if (event.getEventDate()!=null) {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+            em.persist(event);
+            transaction.commit();
+            System.out.println("L'evento " + event.getTitle() + " è stato caricato correttamente!");
+        } else {
+            System.err.println("Imposta una data valida prima di aggiungere l'evento al database");
+        }
     }
     public Event getById(long id){
-        return em.find(Event.class,id);
+        Event found = null;
+        try {
+            found = em.find(Event.class, id);
+            if (found == null){
+                throw new IllegalArgumentException("L'evento con id='"+id+"' non è presente nel database");
+            }
+        } catch (IllegalArgumentException e){
+            System.err.println(e);
+        }
+        return found;
     }
-    public void delete(Event event){
+    public void delete(long id){
+        Event found = this.getById(id);
         EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
-        em.remove(event);
-        transaction.commit();
-        System.out.println("L'evento " + event.getTitle() + " è stato rimosso correttamente!");
+        try {
+            transaction.begin();
+            em.remove(found);
+            transaction.commit();
+            System.out.println("L'evento " + found.getTitle() + " è stato rimosso correttamente!");
+        }catch (IllegalArgumentException | NullPointerException e){
+            System.err.println("L'evento con id='"+id+"' non è presente nel database");
+        }
     }
 }
